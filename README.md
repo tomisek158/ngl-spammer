@@ -1,7 +1,7 @@
 # NGL SPAMMER
 
 Ngl Spammer to sp4m
-## Installation imports
+## Import Install
 
 
 ```bash
