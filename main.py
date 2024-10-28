@@ -78,7 +78,7 @@ def main():
 ██║ ╚████║╚██████╔╝███████╗    ███████║██║     ██║  ██║██║ ╚═╝ ██║██║ ╚═╝ ██║███████╗██║  ██║
 ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝    ╚══════╝╚═╝     ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝
 
-by nullcod3r
+by NullSquad
     """ + Style.RESET_ALL)
 
     ngl_username = input(f"{Fore.RED}? {Fore.LIGHTBLACK_EX}| {Fore.WHITE}NGL Username: {Fore.RED}")
