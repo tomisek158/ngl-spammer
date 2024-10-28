@@ -1,6 +1,6 @@
 # NGL SPAMMER
 
-Ngl Spammer to sp4m
+Ngl Spammer to sp4m users who owns ngl.link
 ## Import Install
 
 
@@ -13,8 +13,4 @@ pip install -r requirements.txt
 python main.py
 ```
 
-
-## Warning
-
-This project is intended for educational purposes only. The author takes no responsibility for any illegal use of this code.
 
