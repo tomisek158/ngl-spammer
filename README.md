@@ -1,3 +1,7 @@
+# IMPORTANT !!!
+IF YOU DONT HAVE PYTHON DOWNLOAD RELEASE
+
+
 # NGL SPAMMER
 
 Ngl Spammer to sp4m users who owns ngl.link
