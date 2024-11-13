@@ -7,67 +7,67 @@ import datetime
 import threading
 import time
 
-class MessageSender:
-    def __init__(self, max_errors=5, wait_time=10):
-        self.message_counter = 1
-        self.error_count = 0
-        self.max_errors = max_errors
-        self.wait_time = wait_time
-        self.message_counter_lock = threading.Lock()
+class MessageDispatcher:
+    def __init__(self, max_fails=5, pause_duration=10):
+        self.sent_messages = 1
+        self.failure_count = 0
+        self.max_fails = max_fails
+        self.pause_duration = pause_duration
+        self.counter_lock = threading.Lock()
 
-    def send_request(self, ngl_username, message, proxy):
+    def post_message(self, username, message_text, proxy_server):
         headers = {
             'Host': 'ngl.link',
             'accept': '*/*',
             'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
             'x-requested-with': 'XMLHttpRequest',
             'user-agent': 'Mozilla/5.0',
-            'origin': f'https://ngl.link/{ngl_username}',
-            'referer': f'https://ngl.link/{ngl_username}',
+            'origin': f'https://ngl.link/{username}',
+            'referer': f'https://ngl.link/{username}',
             'accept-language': 'en-US,en;q=0.9',
         }
 
-        data = {
-            'username': ngl_username,
-            'question': message,
+        payload = {
+            'username': username,
+            'question': message_text,
             'deviceId': '0',
             'gameSlug': '',
             'referrer': '',
         }
 
         try:
-            response = requests.post('https://ngl.link/api/submit', headers=headers, data=data, proxies=proxy, timeout=10)
+            response = requests.post('https://ngl.link/api/submit', headers=headers, data=payload, proxies=proxy_server, timeout=10)
             if response.status_code == 200:
                 timestamp = datetime.datetime.now().strftime("%H:%M:%S")
-                with self.message_counter_lock:
-                    print(f"{Fore.GREEN}+ {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Send >> {Fore.RED}{ngl_username} {Fore.WHITE}at {Fore.RED}{timestamp} {Fore.WHITE}{self.message_counter}{Style.RESET_ALL}")
-                    self.message_counter += 1
-                self.error_count = 0
+                with self.counter_lock:
+                    print(f"{Fore.GREEN}+ {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Sent to >> {Fore.RED}{username} {Fore.WHITE}at {Fore.RED}{timestamp} {Fore.WHITE}{self.sent_messages}{Style.RESET_ALL}")
+                    self.sent_messages += 1
+                self.failure_count = 0
             else:
-                print(f"{Fore.RED}- {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Not Sent (Status Code: {Fore.RED}{response.status_code}{Fore.WHITE}){Style.RESET_ALL}")
-                self.handle_error()
+                print(f"{Fore.RED}- {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Failed to send (Code: {Fore.RED}{response.status_code}{Fore.WHITE}){Style.RESET_ALL}")
+                self.increment_failure()
         except Exception as e:
-            print(f"{Fore.RED}- {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Error while sending request: {Fore.RED}{str(e)}{Style.RESET_ALL}")
-            self.handle_error()
+            print(f"{Fore.RED}- {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Error sending message: {Fore.RED}{str(e)}{Style.RESET_ALL}")
+            self.increment_failure()
 
-    def handle_error(self):
-        self.error_count += 1
-        if self.error_count > self.max_errors:
-            print(f"{Fore.YELLOW}! {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Waiting {self.wait_time} seconds due to too many errors...{Style.RESET_ALL}")
-            time.sleep(self.wait_time)
-            self.error_count = 0
+    def increment_failure(self):
+        self.failure_count += 1
+        if self.failure_count > self.max_fails:
+            print(f"{Fore.YELLOW}! {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Pausing {self.pause_duration} seconds due to multiple errors...{Style.RESET_ALL}")
+            time.sleep(self.pause_duration)
+            self.failure_count = 0
 
-    def handle_stats(self, start_time, reason):
+    def report_statistics(self, start_time, completion_reason):
         end_time = time.time()
-        total_time = end_time - start_time
-        total_messages = self.message_counter - 1
-        mps = total_messages / total_time if total_time > 0 else 0
-        print(f"\n{Fore.RED}! {Fore.LIGHTBLACK_EX}| {Fore.RED}{reason}{Style.RESET_ALL}")
-        print(f"{Fore.RED}! {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Total messages sent: {Fore.RED}{total_messages}{Style.RESET_ALL}")
-        print(f"{Fore.RED}! {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Total time: {Fore.RED}{total_time:.2f} seconds{Style.RESET_ALL}")
+        total_duration = end_time - start_time
+        total_sent = self.sent_messages - 1
+        mps = total_sent / total_duration if total_duration > 0 else 0
+        print(f"\n{Fore.RED}! {Fore.LIGHTBLACK_EX}| {Fore.RED}{completion_reason}{Style.RESET_ALL}")
+        print(f"{Fore.RED}! {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Messages sent: {Fore.RED}{total_sent}{Style.RESET_ALL}")
+        print(f"{Fore.RED}! {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Total time: {Fore.RED}{total_duration:.2f} sec{Style.RESET_ALL}")
         print(f"{Fore.RED}! {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Average MPS: {Fore.RED}{mps:.2f}{Style.RESET_ALL}")
 
-def main():
+def start_messaging():
     os.system('cls' if os.name == 'nt' else 'clear')
 
     print(Fore.RED + """
@@ -78,25 +78,26 @@ def main():
 ██║ ╚████║╚██████╔╝███████╗    ███████║██║     ██║  ██║██║ ╚═╝ ██║██║ ╚═╝ ██║███████╗██║  ██║
 ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝    ╚══════╝╚═╝     ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝
 
-by NullSquad
+by tomisek158 
+Credits to Drindez
     """ + Style.RESET_ALL)
 
-    ngl_username = input(f"{Fore.RED}? {Fore.LIGHTBLACK_EX}| {Fore.WHITE}NGL Username: {Fore.RED}")
-    message_input = input(f"{Fore.RED}? {Fore.LIGHTBLACK_EX}| {Fore.WHITE}NGL Message (leave blank to use messages from messages.txt): {Fore.RED}")
+    ngl_username = input(f"{Fore.RED}? {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Username: {Fore.RED}")
+    custom_message = input(f"{Fore.RED}? {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Custom Message (leave blank to use messages from messages.txt): {Fore.RED}")
 
     while True:
         try:
-            count = int(input(f"{Fore.RED}? {Fore.LIGHTBLACK_EX}| {Fore.WHITE}MESSAGE Count: {Fore.RED}"))
+            message_count = int(input(f"{Fore.RED}? {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Message count: {Fore.RED}"))
             break
         except ValueError:
-            print(f"{Fore.RED}- {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Please enter a valid number.{Style.RESET_ALL}")
+            print(f"{Fore.RED}- {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Invalid input. Enter a number.{Style.RESET_ALL}")
 
     while True:
         try:
-            thread_count = int(input(f"{Fore.RED}? {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Number of Threads: {Fore.RED}"))
+            thread_num = int(input(f"{Fore.RED}? {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Thread count: {Fore.RED}"))
             break
         except ValueError:
-            print(f"{Fore.RED}- {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Please enter a valid number.{Style.RESET_ALL}")
+            print(f"{Fore.RED}- {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Provide a valid number for threads.{Style.RESET_ALL}")
 
     with open("proxies.txt", "r") as proxy_file:
         proxy_list = proxy_file.read().splitlines()
@@ -104,26 +105,26 @@ by NullSquad
     with open("messages.txt", "r") as messages_file:
         messages = messages_file.read().splitlines()
 
-    sender = MessageSender()
+    dispatcher = MessageDispatcher()
 
     try:
         start_time = time.time()
-        while count > 0:
-            with concurrent.futures.ThreadPoolExecutor(max_workers=thread_count) as executor:
+        while message_count > 0:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=thread_num) as executor:
                 futures = []
                 for proxy in proxy_list:
-                    current_message = message_input if message_input else random.choice(messages)
-                    futures.append(executor.submit(sender.send_request, ngl_username, current_message, {"http": proxy, "https": proxy}))
-                    count -= 1
-                    if count <= 0:
+                    current_message = custom_message if custom_message else random.choice(messages)
+                    futures.append(executor.submit(dispatcher.post_message, ngl_username, current_message, {"http": proxy, "https": proxy}))
+                    message_count -= 1
+                    if message_count <= 0:
                         break
 
                 concurrent.futures.wait(futures)
 
-        sender.handle_stats(start_time, "All messages sent!")
+        dispatcher.report_statistics(start_time, "Messages dispatched!")
 
     except KeyboardInterrupt:
-        sender.handle_stats(start_time, "Stopping by user...")
+        dispatcher.report_statistics(start_time, "Stopped by user.")
 
 if __name__ == "__main__":
-    main()
+    start_messaging()
