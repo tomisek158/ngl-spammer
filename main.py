@@ -40,7 +40,7 @@ class MessageDispatcher:
             if response.status_code == 200:
                 timestamp = datetime.datetime.now().strftime("%H:%M:%S")
                 with self.counter_lock:
-                    print(f"{Fore.GREEN}+ {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Message sent to {Fore.RED}{username} {Fore.WHITE}at {Fore.RED}{timestamp} {Fore.WHITE}(#{self.sent_messages}){Style.RESET_ALL}")
+                    print(f"{Fore.GREEN}+ {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Send >> {Fore.RED}{username} {Fore.WHITE}at {Fore.RED}{timestamp} {Fore.WHITE}(#{self.sent_messages}){Style.RESET_ALL}")
                     self.sent_messages += 1
                 self.failure_count = 0
             else:
