@@ -40,20 +40,20 @@ class MessageDispatcher:
             if response.status_code == 200:
                 timestamp = datetime.datetime.now().strftime("%H:%M:%S")
                 with self.counter_lock:
-                    print(f"{Fore.GREEN}+ {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Sent to >> {Fore.RED}{username} {Fore.WHITE}at {Fore.RED}{timestamp} {Fore.WHITE}{self.sent_messages}{Style.RESET_ALL}")
+                    print(f"{Fore.GREEN}+ {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Message sent to {Fore.RED}{username} {Fore.WHITE}at {Fore.RED}{timestamp} {Fore.WHITE}(#{self.sent_messages}){Style.RESET_ALL}")
                     self.sent_messages += 1
                 self.failure_count = 0
             else:
-                print(f"{Fore.RED}- {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Failed to send (Code: {Fore.RED}{response.status_code}{Fore.WHITE}){Style.RESET_ALL}")
+                print(f"{Fore.RED}- {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Failed to send message. Status code: {Fore.RED}{response.status_code}{Style.RESET_ALL}")
                 self.increment_failure()
         except Exception as e:
-            print(f"{Fore.RED}- {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Error sending message: {Fore.RED}{str(e)}{Style.RESET_ALL}")
+            print(f"{Fore.RED}- {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Error while sending message: {Fore.RED}{str(e)}{Style.RESET_ALL}")
             self.increment_failure()
 
     def increment_failure(self):
         self.failure_count += 1
         if self.failure_count > self.max_fails:
-            print(f"{Fore.YELLOW}! {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Pausing {self.pause_duration} seconds due to multiple errors...{Style.RESET_ALL}")
+            print(f"{Fore.YELLOW}! {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Too many errors; pausing for {self.pause_duration} seconds...{Style.RESET_ALL}")
             time.sleep(self.pause_duration)
             self.failure_count = 0
 
@@ -63,9 +63,9 @@ class MessageDispatcher:
         total_sent = self.sent_messages - 1
         mps = total_sent / total_duration if total_duration > 0 else 0
         print(f"\n{Fore.RED}! {Fore.LIGHTBLACK_EX}| {Fore.RED}{completion_reason}{Style.RESET_ALL}")
-        print(f"{Fore.RED}! {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Messages sent: {Fore.RED}{total_sent}{Style.RESET_ALL}")
-        print(f"{Fore.RED}! {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Total time: {Fore.RED}{total_duration:.2f} sec{Style.RESET_ALL}")
-        print(f"{Fore.RED}! {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Average MPS: {Fore.RED}{mps:.2f}{Style.RESET_ALL}")
+        print(f"{Fore.RED}! {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Total messages sent: {Fore.RED}{total_sent}{Style.RESET_ALL}")
+        print(f"{Fore.RED}! {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Duration: {Fore.RED}{total_duration:.2f} sec{Style.RESET_ALL}")
+        print(f"{Fore.RED}! {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Messages per second: {Fore.RED}{mps:.2f}{Style.RESET_ALL}")
 
 def start_messaging():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -78,7 +78,7 @@ def start_messaging():
 ██║ ╚████║╚██████╔╝███████╗    ███████║██║     ██║  ██║██║ ╚═╝ ██║██║ ╚═╝ ██║███████╗██║  ██║
 ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝    ╚══════╝╚═╝     ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝
 
-by tomisek158
+by tomisek158 
     """ + Style.RESET_ALL)
 
     ngl_username = input(f"{Fore.RED}? {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Username: {Fore.RED}")
@@ -89,14 +89,14 @@ by tomisek158
             message_count = int(input(f"{Fore.RED}? {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Message count: {Fore.RED}"))
             break
         except ValueError:
-            print(f"{Fore.RED}- {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Invalid input. Enter a number.{Style.RESET_ALL}")
+            print(f"{Fore.RED}- {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Invalid input. Please enter a number.{Style.RESET_ALL}")
 
     while True:
         try:
             thread_num = int(input(f"{Fore.RED}? {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Thread count: {Fore.RED}"))
             break
         except ValueError:
-            print(f"{Fore.RED}- {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Provide a valid number for threads.{Style.RESET_ALL}")
+            print(f"{Fore.RED}- {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Please provide a valid number for threads.{Style.RESET_ALL}")
 
     with open("proxies.txt", "r") as proxy_file:
         proxy_list = proxy_file.read().splitlines()
@@ -120,7 +120,7 @@ by tomisek158
 
                 concurrent.futures.wait(futures)
 
-        dispatcher.report_statistics(start_time, "Messages dispatched!")
+        dispatcher.report_statistics(start_time, "All messages sent!")
 
     except KeyboardInterrupt:
         dispatcher.report_statistics(start_time, "Stopped by user.")
