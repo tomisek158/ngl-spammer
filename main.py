@@ -78,8 +78,7 @@ def start_messaging():
 ██║ ╚████║╚██████╔╝███████╗    ███████║██║     ██║  ██║██║ ╚═╝ ██║██║ ╚═╝ ██║███████╗██║  ██║
 ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝    ╚══════╝╚═╝     ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝
 
-by tomisek158 
-Credits to Drindez
+by tomisek158
     """ + Style.RESET_ALL)
 
     ngl_username = input(f"{Fore.RED}? {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Username: {Fore.RED}")
