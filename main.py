@@ -3,16 +3,13 @@ import concurrent.futures
 import requests
 from colorama import Fore, Style
 import random
-import datetime
-import threading
 import time
+import threading
+import datetime
 
 class MessageSender:
-    def __init__(self, max_retries=5, retry_delay=10):
+    def __init__(self):
         self.messages_sent = 0
-        self.errors = 0
-        self.max_retries = max_retries
-        self.retry_delay = retry_delay
         self.lock = threading.Lock()
 
     def send_message(self, username, message, proxy):
@@ -36,34 +33,22 @@ class MessageSender:
         }
 
         try:
-            response = requests.post('https://ngl.link/api/submit', headers=headers, data=payload, proxies=proxy, timeout=10)
+            # Timeout nastavený na 1 sekundu pro rychlé požadavky
+            response = requests.post('https://ngl.link/api/submit', headers=headers, data=payload, proxies=proxy, timeout=1)
             if response.status_code == 200:
                 timestamp = datetime.datetime.now().strftime("%H:%M:%S")
                 with self.lock:
                     self.messages_sent += 1
-                    print(f"{Fore.GREEN}+ {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Sent >> {Fore.RED}{username} {Fore.WHITE}at {Fore.RED}{timestamp} {Fore.WHITE}(#{self.sent_messages}){Style.RESET_ALL}")
-                self.errors = 0
-            else:
-                print(f"{Fore.RED}- {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Failed: {response.status_code}{Style.RESET_ALL}")
-                self._handle_error()
-        except Exception as e:
-            print(f"{Fore.RED}- {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Error: {str(e)}{Style.RESET_ALL}")
-            self._handle_error()
+                    print(f"{Fore.GREEN}+ {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Sent >> {Fore.RED}{username} {Fore.WHITE}at {Fore.RED}{timestamp} {Fore.WHITE}(#{self.messages_sent}){Style.RESET_ALL}")
+        except Exception:
+            pass  # Ignoruj chyby, pokud dojde k výpadku nebo jiným problémům
 
-    def _handle_error(self):
-        self.errors += 1
-        if self.errors >= self.max_retries:
-            print(f"{Fore.YELLOW}! {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Too many errors, pausing for {self.retry_delay} seconds...{Style.RESET_ALL}")
-            time.sleep(self.retry_delay)
-            self.errors = 0
-
-    def show_stats(self, start_time, reason):
+    def show_stats(self, start_time):
         end_time = time.time()
         duration = end_time - start_time
         total_sent = self.messages_sent
         mps = total_sent / duration if duration > 0 else 0
-        print(f"\n{Fore.RED}! {Fore.LIGHTBLACK_EX}| {reason}{Style.RESET_ALL}")
-        print(f"{Fore.RED}! {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Total messages: {Fore.RED}{total_sent}{Style.RESET_ALL}")
+        print(f"\n{Fore.RED}! {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Total messages: {Fore.RED}{total_sent}{Style.RESET_ALL}")
         print(f"{Fore.RED}! {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Duration: {Fore.RED}{duration:.2f} seconds{Style.RESET_ALL}")
         print(f"{Fore.RED}! {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Messages per second: {Fore.RED}{mps:.2f}{Style.RESET_ALL}")
 
@@ -120,10 +105,10 @@ by tomisek158
 
                 concurrent.futures.wait(futures)
 
-        sender.show_stats(start_time, f"{Fore.GREEN}All messages sent!")
+        sender.show_stats(start_time)
 
     except KeyboardInterrupt:
-        sender.show_stats(start_time, f"{Fore.RED}Stopped by user.")
+        sender.show_stats(start_time)
 
 if __name__ == "__main__":
     main()
