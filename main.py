@@ -33,7 +33,6 @@ class MessageSender:
         }
 
         try:
-            # Timeout nastavený na 1 sekundu pro rychlé požadavky
             response = requests.post('https://ngl.link/api/submit', headers=headers, data=payload, proxies=proxy, timeout=1)
             if response.status_code == 200:
                 timestamp = datetime.datetime.now().strftime("%H:%M:%S")
@@ -41,7 +40,7 @@ class MessageSender:
                     self.messages_sent += 1
                     print(f"{Fore.GREEN}+ {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Sent >> {Fore.RED}{username} {Fore.WHITE}at {Fore.RED}{timestamp} {Fore.WHITE}(#{self.messages_sent}){Style.RESET_ALL}")
         except Exception:
-            pass  # Ignoruj chyby, pokud dojde k výpadku nebo jiným problémům
+            pass
 
     def show_stats(self, start_time):
         end_time = time.time()
