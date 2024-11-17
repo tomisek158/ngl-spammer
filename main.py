@@ -109,5 +109,8 @@ by tomisek158
     except KeyboardInterrupt:
         sender.show_stats(start_time)
 
+    print(f"{Fore.GREEN}\nProgram completed. Press any key to exit...{Style.RESET_ALL}")
+    input()
+
 if __name__ == "__main__":
     main()
