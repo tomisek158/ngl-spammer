@@ -10,6 +10,7 @@ import datetime
 class MessageSender:
     def __init__(self):
         self.messages_sent = 0
+        self.error_count = 0
         self.lock = threading.Lock()
 
     def send_message(self, username, message, proxy):
@@ -38,9 +39,22 @@ class MessageSender:
                 timestamp = datetime.datetime.now().strftime("%H:%M:%S")
                 with self.lock:
                     self.messages_sent += 1
-                    print(f"{Fore.GREEN}+ {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Sent >> {Fore.RED}{username} {Fore.WHITE}at {Fore.RED}{timestamp} {Fore.WHITE}(#{self.messages_sent}){Style.RESET_ALL}")
-        except Exception:
-            pass
+                    self.error_count = 0 
+                    print(f"{Fore.GREEN}+ {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Sent >> {Fore.RED}{message} {Fore.WHITE}to {Fore.RED}{username} {Fore.WHITE}at {Fore.RED}{timestamp} {Fore.WHITE}(#{self.messages_sent}){Style.RESET_ALL}")
+            else:
+                with self.lock:
+                    self.error_count += 1
+                print(f"{Fore.RED}- {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Not sent (Status code: {Fore.RED}{response.status_code}{Fore.WHITE}){Style.RESET_ALL}")
+        except requests.RequestException:
+            with self.lock:
+                self.error_count += 1
+            print(f"{Fore.RED}- {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Not sent{Style.RESET_ALL}")
+
+        if self.error_count >= 5:
+            print(f"{Fore.YELLOW}! {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Too many errors. Pausing for 10 seconds...{Style.RESET_ALL}")
+            time.sleep(10)
+            with self.lock:
+                self.error_count = 0 
 
     def show_stats(self, start_time):
         end_time = time.time()
