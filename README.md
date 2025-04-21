@@ -1,4 +1,4 @@
-# 🔁 NGL Auto Messenger v2
+# 🔁 NGL Spammer v2.0.0
 
 NGL Spammer for spamming users with [ngl.link](https://ngl.link) using Python
 
