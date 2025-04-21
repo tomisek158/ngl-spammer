@@ -2,6 +2,8 @@
 
 NGL Spammer for spamming users with [ngl.link](https://ngl.link) using Python
 
+Note: Sorry, I didnt have time to make the exe file, so its not available for download at this moment But as soon as i have time, i publish it in the releases section.
+
 ---
 
 ## ⚙️ Features
@@ -52,7 +54,7 @@ Follow the prompts to input:
 - Removed `httpx`, now using **`requests`** for simpler setup
 - **Improved error handling** (auto pause after 5 fails)
 - **Thread count selection**
-- Fully rewritten for easier editing and running
+- Fully rewritten
 
 ---
 
