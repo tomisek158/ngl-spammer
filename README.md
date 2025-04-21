@@ -65,7 +65,7 @@ Follow the prompts to input:
   - Wrote the core code and built the tool from scratch  
   - Handles updates, documentation, and overall project direction
 
-- **[@NullPlayer]** – Developer
+- **@NullPlayer** – Developer
   - Focuses on fixing bugs and improving code performance  
   - Optimized the spamming system for better speed and reliability  
   - Testing
