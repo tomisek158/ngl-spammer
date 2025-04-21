@@ -58,10 +58,23 @@ Follow the prompts to input:
 
 ---
 
+## 👥 Contributors
+
+- **[@tomisek158](https://github.com/tomisek158)** – Owner  
+  - Main creator of the project  
+  - Wrote the core code and built the tool from scratch  
+  - Handles updates, documentation, and overall project direction
+
+- **[@NullPlayer]** – Developer
+  - Focuses on fixing bugs and improving code performance  
+  - Optimized the spamming system for better speed and reliability  
+  - Testing
+
+
 ## ⚠️ Disclaimer
 
 > For educational use only. The developer is not responsible for misuse.   
 
 ---
 
-Made with ❤️ by [tomisek158](https://github.com/tomisek158)
+Made with ❤️ on 🌍
