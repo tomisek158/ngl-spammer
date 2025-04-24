@@ -2,8 +2,7 @@
 
 NGL Spammer for spamming users with [ngl.link](https://ngl.link) using Python
 
-Note: Sorry, I didnt have time to make the exe file, so its not available for download at this moment But as soon as i have time, i publish it in the releases section.
-
+NGL Spammer exe is now out! Download in [RELEASE](https://github.com/tomisek158/ngl-spammer/releases/tag/1.0)
 ---
 
 ## ⚙️ Features
