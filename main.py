@@ -108,7 +108,7 @@ async def main():
 ██║ ╚████║╚██████╔╝███████╗    ███████║██║     ██║  ██║██║ ╚═╝ ██║██║ ╚═╝ ██║███████╗██║  ██║
 ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝    ╚══════╝╚═╝     ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝
 
-by tomisek158 | v2.0.0
+by tomisek158 & NullPlayer | v2.0.0
     """ + Style.RESET_ALL)
     username = input(f"{Fore.YELLOW}? {Fore.LIGHTBLACK_EX}| {Fore.WHITE}Enter the username you want to send messages to: {Style.RESET_ALL}")
     msg_count = 0
