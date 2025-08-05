@@ -78,4 +78,4 @@ Follow the prompts to input:
 
 ---
 
-Made with ❤️ on 🌍
+Made with ❤️ on 🌍 (Readme.md by ChatGPT, im too lazy 😌)
